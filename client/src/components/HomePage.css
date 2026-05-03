@@ -28,9 +28,14 @@
   display: flex;
   justify-content: center;
   gap: 2rem;
-  list-style: disc;
-  padding-left: 20px;
+  list-style: none;
+  padding-left: 0;
   margin: 0.5rem 0;
+}
+
+.header ul li::before {
+  content: "✓ ";
+  color: green;
 }
 
 .form-section {

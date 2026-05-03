@@ -4,7 +4,8 @@
     "Preacher Curl",
     "Barbell Bench Press",
     "Deadlift",
-    "Back Squat"
+    "Back Squat",
+    "Bench press"
   ],
   "workouts": [
     {
@@ -29,7 +30,7 @@
       "name": "Deadlift 2",
       "exercise": "Deadlift",
       "weight": "150 lbs",
-      "reps": "10"
+      "reps": "13"
     }
   ]
 }

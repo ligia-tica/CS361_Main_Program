@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "./HomePage.css";
 
 
+
 const API = "http://localhost:3001/api";
 
 
@@ -11,6 +12,7 @@ export default function HomePage() {
   const [exerciseForm, setExerciseForm] = useState({ name: "", equipment: "", weightGoal: "" });
   const [workoutForm, setWorkoutForm] = useState({ date: "", name: "", exercise: "", weight: "", reps: "" });
   const [deleteId, setDeleteId] = useState(null);
+  const [showTooltip, setShowTooltip] = useState(false);
 
 // Load data on page load
   useEffect(() => {
@@ -144,7 +146,14 @@ const handleDelete = () => {
               <th>Name</th>
               <th>Exercise</th>
               <th>Weight</th>
-              <th>Reps</th>
+              <th>
+                Reps{" "}
+                <span
+                    onClick={() => setShowTooltip(true)}
+                    style={{ cursor: "pointer", fontSize: 13 }}>
+                    ℹ️
+                </span>
+              </th>
               <th></th>
             </tr>
           </thead>
@@ -169,6 +178,16 @@ const handleDelete = () => {
         </table>
       </div>
 
+      {showTooltip && (
+        <div className="modal-overlay">
+            <div className="modal">
+            <p className="modal-body">Use the – and + buttons to decrease or increase the Reps count</p>
+            <div className="modal-buttons">
+                <button className="confirm-button" onClick={() => setShowTooltip(false)}>OK</button>
+            </div>
+            </div>
+        </div>
+        )}    
       {/* Delete Modal */}
       {deleteId && (
         <div className="modal-overlay">
