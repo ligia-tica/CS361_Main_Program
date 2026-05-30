@@ -30,6 +30,30 @@
       "exercise": "Deadlift",
       "weight": "80",
       "reps": "2"
+    },
+    {
+      "id": 1780171924808,
+      "date": "05.30.2026",
+      "name": "Barbells #3",
+      "exercise": "Barbell Curl",
+      "weight": "60",
+      "reps": "15"
+    },
+    {
+      "id": 1780172588159,
+      "date": "05.30.2026",
+      "name": "Barbells #4",
+      "exercise": "Barbell Curl",
+      "weight": "60",
+      "reps": "15"
+    },
+    {
+      "id": 1780172610977,
+      "date": "05.30.2026",
+      "name": "Barbells #5",
+      "exercise": "Barbell Curl",
+      "weight": "60",
+      "reps": "15"
     }
   ]
 }

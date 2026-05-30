@@ -85,22 +85,33 @@
   border: none;
   cursor: pointer;
 }
+.table-wrapper {
+  max-height: 250px;
+  overflow-y: auto;
+  margin-top: 1rem;
+  border: 1px solid #333;
+  border-radius: 4px;
+}
 
 .workout-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 1rem;
+  margin-top: 0;
 }
 
-.workout-table th,
+.workout-table th {
+  position: sticky;
+  top: 0;
+  background: #f4f4f4;
+  z-index: 1;
+  border: 1px solid #333;
+  padding: 8px 12px;
+}
+
 .workout-table td {
   border: 1px solid #333;
   padding: 8px 12px;
   text-align: center;
-}
-
-.workout-table th {
-  background: #f4f4f4;
 }
 
 .rep-button {
@@ -201,4 +212,59 @@
 .notification-banner.error {
   background-color: #f8d7da;
   color: #721c24;
+}
+
+.stats-section {
+  margin-top: 1.5rem;
+  border-top: 2px solid #1a1a2e;
+  padding-top: 1rem;
+}
+
+.stats-section h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.stats-grid {
+  display: flex;
+  justify-content: space-around;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: #1a1a2e;
+  color: white;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  text-align: center;
+  flex: 1;
+}
+
+.stat-card p {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.stat-card h3 {
+  margin: 0.5rem 0 0;
+  font-size: 20px;
+}
+
+.records-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.records-table th,
+.records-table td {
+  border: 1px solid #333;
+  padding: 8px 12px;
+  text-align: center;
+}
+
+.records-table th {
+  background: #1a1a2e;
+  color: white;
 }

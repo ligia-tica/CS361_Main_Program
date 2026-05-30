@@ -15,6 +15,8 @@ export default function HomePage() {
   const [deleteId, setDeleteId] = useState(null);
   const [showTooltip, setShowTooltip] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [stats, setStats] = useState(null);
+  const [records, setRecords] = useState([]);
 
   const showNotification = (message, type) => {
     fetch("http://localhost:3002/api/notifications", {
@@ -34,8 +36,25 @@ export default function HomePage() {
         setExercises(data.exercises);
         setWorkouts(data.workouts);
       });
-  }, []);
 
+    fetch("http://localhost:3003/api/stats")
+    .then(res => res.json())
+    .then(data => setStats(data));
+
+    fetch("http://localhost:3003/api/stats/records")
+    .then(res => res.json())
+    .then(data => setRecords(data));
+}, []);
+
+
+const refreshStats = () => {
+  fetch("http://localhost:3003/api/stats")
+    .then(res => res.json())
+    .then(data => setStats(data));
+  fetch("http://localhost:3003/api/stats/records")
+    .then(res => res.json())
+    .then(data => setRecords(data));
+};
 
 const handleAddExercise = () => {
   if (!exerciseForm.name || !exerciseForm.equipment) {
@@ -72,6 +91,10 @@ const handleAddWorkout = () => {
       setWorkouts([...workouts, newWorkout]);
       setWorkoutForm({ date: "", name: "", exercise: "", weight: "", reps: "" });
       showNotification("Workout added successfully!", "success");
+      setWorkouts([...workouts, newWorkout]);
+      setWorkoutForm({ date: "", name: "", exercise: "", weight: "", reps: "" });
+      showNotification("Workout added successfully!", "success");
+      refreshStats();
     });
 };
 
@@ -96,6 +119,10 @@ const handleDelete = () => {
       setWorkouts(workouts.filter(w => w.id !== deleteId));
       setDeleteId(null);
       showNotification("Workout deleted.", "info");
+      setWorkouts(workouts.filter(w => w.id !== deleteId));
+      setDeleteId(null);
+      showNotification("Workout deleted.", "info");
+      refreshStats();
     });
 };
 
@@ -163,45 +190,81 @@ const handleDelete = () => {
         </div>
 
         {/* Workout Table */}
-        <table className="workout-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Name</th>
-              <th>Exercise</th>
-              <th>Weight</th>
-              <th>
-                Reps{" "}
-                <span
-                    onClick={() => setShowTooltip(true)}
-                    style={{ cursor: "pointer", fontSize: 13 }}>
-                    ℹ️
-                </span>
-              </th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {workouts.map(w => (
-              <tr key={w.id}>
-                <td>{w.date}</td>
-                <td>{w.name}</td>
-                <td>{w.exercise}</td>
-                <td>{w.weight}</td>
-                <td>
-                  <button className="rep-button" onClick={() => handleRepChange(w.id, -1)}>−</button>
-                  {" "}{w.reps}{" "}
-                  <button className="rep-button" onClick={() => handleRepChange(w.id, 1)}>+</button>
-                </td>
-                <td>
-                  <button className="delete-button" onClick={() => setDeleteId(w.id)}>Delete</button>
-                </td>
+        <div className="table-wrapper">
+          <table className="workout-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Exercise</th>
+                <th>Weight</th>
+                <th>
+                  Reps{" "}
+                  <span
+                      onClick={() => setShowTooltip(true)}
+                      style={{ cursor: "pointer", fontSize: 13 }}>
+                      ℹ️
+                  </span>
+                </th>
+                <th></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {workouts.map(w => (
+                <tr key={w.id}>
+                  <td>{w.date}</td>
+                  <td>{w.name}</td>
+                  <td>{w.exercise}</td>
+                  <td>{w.weight}</td>
+                  <td>
+                    <button className="rep-button" onClick={() => handleRepChange(w.id, -1)}>−</button>
+                    {" "}{w.reps}{" "}
+                    <button className="rep-button" onClick={() => handleRepChange(w.id, 1)}>+</button>
+                  </td>
+                  <td>
+                    <button className="delete-button" onClick={() => setDeleteId(w.id)}>Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      {stats && (
+        <div className="stats-section">
+          <h2>Track Progress</h2>
+          <div className="stats-grid">
+            <div className="stat-card">
+              <p>Total Workouts</p>
+              <h3>{stats.totalWorkouts}</h3>
+            </div>
+            <div className="stat-card">
+              <p>Most Used Exercise</p>
+              <h3>{stats.mostUsedExercise}</h3>
+            </div>
+            <div className="stat-card">
+              <p>Highest Weight Lifted</p>
+              <h3>{stats.highestWeight}</h3>
+            </div>
+          </div>
 
+          <table className="records-table">
+            <thead>
+              <tr>
+                <th>Exercise</th>
+                <th>Personal Record</th>
+              </tr>
+            </thead>
+            <tbody>
+              {records.map(r => (
+                <tr key={r.exercise}>
+                  <td>{r.exercise}</td>
+                  <td>{r.highestWeight}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
       {showTooltip && (
         <div className="modal-overlay">
             <div className="modal">
@@ -226,6 +289,7 @@ const handleDelete = () => {
         </div>
       )}
     </div>
+  </div>
   );
 }
 
