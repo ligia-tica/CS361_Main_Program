@@ -170,3 +170,35 @@
   color: white;
   cursor: pointer;
 }
+.notification-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 12px 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 15px;
+  z-index: 1000;
+  transition: opacity 0.5s ease;
+}
+
+.notification-banner.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.notification-banner.warning {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.notification-banner.info {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.notification-banner.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}

@@ -6,6 +6,7 @@ import "./HomePage.css";
 const API = "http://localhost:3001/api";
 
 
+
 export default function HomePage() {
   const [exercises, setExercises] = useState([]);
   const [workouts, setWorkouts] = useState([]);
@@ -13,6 +14,17 @@ export default function HomePage() {
   const [workoutForm, setWorkoutForm] = useState({ date: "", name: "", exercise: "", weight: "", reps: "" });
   const [deleteId, setDeleteId] = useState(null);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [notification, setNotification] = useState(null);
+
+  const showNotification = (message, type) => {
+    fetch("http://localhost:3002/api/notifications", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message, type }),
+    });
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 3000);
+  };
 
 // Load data on page load
   useEffect(() => {
@@ -26,7 +38,10 @@ export default function HomePage() {
 
 
 const handleAddExercise = () => {
-  if (!exerciseForm.name || !exerciseForm.equipment) return;
+  if (!exerciseForm.name || !exerciseForm.equipment) {
+    showNotification("Please fill in all required fields.", "warning");
+    return;
+  }
   fetch(`${API}/exercises`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -36,15 +51,17 @@ const handleAddExercise = () => {
     .then(updatedExercises => {
       setExercises(updatedExercises);
       setExerciseForm({ name: "", equipment: "", weightGoal: "" });
+      showNotification("Exercise added successfully!", "success");
     });
 };
 
 const handleAddWorkout = () => {
-  if (!workoutForm.date || !workoutForm.name || !workoutForm.exercise || !workoutForm.weight || !workoutForm.reps) return;
-  
+  if (!workoutForm.date || !workoutForm.name || !workoutForm.exercise || !workoutForm.weight || !workoutForm.reps) {
+    showNotification("Please fill in all required fields.", "warning");
+    return;
+  }
   const [year, month, day] = workoutForm.date.split("-");
   const formattedDate = `${month}.${day}.${year}`;
-
   fetch(`${API}/workouts`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -54,6 +71,7 @@ const handleAddWorkout = () => {
     .then(newWorkout => {
       setWorkouts([...workouts, newWorkout]);
       setWorkoutForm({ date: "", name: "", exercise: "", weight: "", reps: "" });
+      showNotification("Workout added successfully!", "success");
     });
 };
 
@@ -77,11 +95,17 @@ const handleDelete = () => {
     .then(() => {
       setWorkouts(workouts.filter(w => w.id !== deleteId));
       setDeleteId(null);
+      showNotification("Workout deleted.", "info");
     });
 };
 
   return (
     <div className="page-layout">
+      {notification && (
+        <div className={`notification-banner ${notification.type}`}>
+          {notification.message}
+        </div>
+      )}
       <div className="app-card">
 
         {/* Header */}
@@ -204,3 +228,5 @@ const handleDelete = () => {
     </div>
   );
 }
+
+

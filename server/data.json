@@ -2,10 +2,9 @@
   "exercises": [
     "Barbell Curl",
     "Preacher Curl",
-    "Barbell Bench Press",
     "Deadlift",
     "Back Squat",
-    "Bench press"
+    "Barbell benchpress"
   ],
   "workouts": [
     {
@@ -25,12 +24,12 @@
       "reps": "15"
     },
     {
-      "id": 1777831411819,
-      "date": "05.03.2026",
-      "name": "Deadlift 2",
+      "id": 1780169866908,
+      "date": "05.30.2026",
+      "name": "Deadlift #1",
       "exercise": "Deadlift",
-      "weight": "150 lbs",
-      "reps": "13"
+      "weight": "80",
+      "reps": "2"
     }
   ]
 }
