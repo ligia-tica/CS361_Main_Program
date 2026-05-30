@@ -7,9 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "node server/index.js",
     "notifications": "node ../server/notification-service/index.js",
-    "stats": "node ../CS361/stats-service/index.js",
+    "stats": "node ../stats-service/index.js",
+    "filter": "node ../filter-service/index.js",
     "client": "npm run dev --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run notifications\" \"npm run stats\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run notifications\" \"npm run stats\" \"npm run filter\" \"npm run client\""
   },
   "keywords": [],
   "author": "",

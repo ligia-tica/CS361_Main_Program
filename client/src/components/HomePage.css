@@ -268,3 +268,36 @@
   background: #1a1a2e;
   color: white;
 }
+.filter-section {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-section input,
+.filter-section select {
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid #333;
+}
+
+.filter-button {
+  padding: 6px 16px;
+  border-radius: 4px;
+  border: none;
+  background: #1a1a2e;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.clear-button {
+  padding: 6px 16px;
+  border-radius: 4px;
+  border: 1px solid #333;
+  background: white;
+  cursor: pointer;
+}

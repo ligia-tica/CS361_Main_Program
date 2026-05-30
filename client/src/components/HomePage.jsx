@@ -17,6 +17,10 @@ export default function HomePage() {
   const [notification, setNotification] = useState(null);
   const [stats, setStats] = useState(null);
   const [records, setRecords] = useState([]);
+  const [filterExercise, setFilterExercise] = useState("");
+  const [filterDate, setFilterDate] = useState("");
+  const [filteredWorkouts, setFilteredWorkouts] = useState(null);
+
 
   const showNotification = (message, type) => {
     fetch("http://localhost:3002/api/notifications", {
@@ -91,9 +95,6 @@ const handleAddWorkout = () => {
       setWorkouts([...workouts, newWorkout]);
       setWorkoutForm({ date: "", name: "", exercise: "", weight: "", reps: "" });
       showNotification("Workout added successfully!", "success");
-      setWorkouts([...workouts, newWorkout]);
-      setWorkoutForm({ date: "", name: "", exercise: "", weight: "", reps: "" });
-      showNotification("Workout added successfully!", "success");
       refreshStats();
     });
 };
@@ -119,11 +120,30 @@ const handleDelete = () => {
       setWorkouts(workouts.filter(w => w.id !== deleteId));
       setDeleteId(null);
       showNotification("Workout deleted.", "info");
-      setWorkouts(workouts.filter(w => w.id !== deleteId));
-      setDeleteId(null);
-      showNotification("Workout deleted.", "info");
       refreshStats();
     });
+};
+
+const handleFilter = () => {
+  if (!filterExercise && !filterDate) return;
+
+  let url = "http://localhost:3004/api/filter?";
+  if (filterExercise) url += `exercise=${filterExercise}&`;
+  if (filterDate) {
+    const [year, month, day] = filterDate.split("-");
+    const formattedDate = `${month}.${day}.${year}`;
+    url += `date=${formattedDate}`;
+  }
+
+  fetch(url)
+    .then(res => res.json())
+    .then(data => setFilteredWorkouts(data));
+};
+
+const handleClearFilter = () => {
+  setFilterExercise("");
+  setFilterDate("");
+  setFilteredWorkouts(null);
 };
 
   return (
@@ -190,6 +210,21 @@ const handleDelete = () => {
         </div>
 
         {/* Workout Table */}
+        <div className="filter-section">
+          <input
+            type="text"
+            placeholder="Filter by exercise..."
+            value={filterExercise}
+            onChange={e => setFilterExercise(e.target.value)}
+          />
+          <input
+            type="date"
+            value={filterDate}
+            onChange={e => setFilterDate(e.target.value)}
+          />
+          <button className="filter-button" onClick={handleFilter}>Search</button>
+          <button className="clear-button" onClick={handleClearFilter}>Clear</button>
+        </div>
         <div className="table-wrapper">
           <table className="workout-table">
             <thead>
@@ -210,7 +245,7 @@ const handleDelete = () => {
               </tr>
             </thead>
             <tbody>
-              {workouts.map(w => (
+              {(filteredWorkouts || workouts).map(w => (
                 <tr key={w.id}>
                   <td>{w.date}</td>
                   <td>{w.name}</td>
