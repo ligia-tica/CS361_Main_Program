@@ -20,6 +20,8 @@ export default function HomePage() {
   const [filterExercise, setFilterExercise] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [filteredWorkouts, setFilteredWorkouts] = useState(null);
+  const [goals, setGoals] = useState([]);
+  const [goalForm, setGoalForm] = useState({ title: "", endDate: "" });
 
 
   const showNotification = (message, type) => {
@@ -48,6 +50,10 @@ export default function HomePage() {
     fetch("http://localhost:3003/api/stats/records")
     .then(res => res.json())
     .then(data => setRecords(data));
+
+    fetch("http://localhost:4001/api/goals")
+    .then(res => res.json())
+    .then(data => setGoals(data));
 }, []);
 
 
@@ -73,6 +79,25 @@ const handleAddExercise = () => {
     .then(res => res.json())
     .then(updatedExercises => {
       setExercises(updatedExercises);
+
+      // If weight goal was provided, send it to the goals service
+      if (exerciseForm.weightGoal) {
+        fetch("http://localhost:4001/api/goals", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: "barebar_user",
+            appId: "barebar",
+            title: `${exerciseForm.name} - ${exerciseForm.weightGoal}`,
+            endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0], // 30 days from now
+          }),
+        })
+          .then(res => res.json())
+          .then(newGoal => {
+            setGoals([...goals, newGoal]);
+          });
+      }
+
       setExerciseForm({ name: "", equipment: "", weightGoal: "" });
       showNotification("Exercise added successfully!", "success");
     });
@@ -144,6 +169,37 @@ const handleClearFilter = () => {
   setFilterExercise("");
   setFilterDate("");
   setFilteredWorkouts(null);
+};
+
+const handleAddGoal = () => {
+  if (!goalForm.title || !goalForm.endDate) {
+    showNotification("Please fill in all goal fields.", "warning");
+    return;
+  }
+  fetch("http://localhost:4001/api/goals", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      userId: "barebar_user",
+      appId: "barebar",
+      title: goalForm.title,
+      endDate: goalForm.endDate,
+    }),
+  })
+    .then(res => res.json())
+    .then(newGoal => {
+      setGoals([...goals, newGoal]);
+      setGoalForm({ title: "", endDate: "" });
+      showNotification("Goal added successfully!", "success");
+    });
+};
+
+const handleDeleteGoal = (id) => {
+  fetch(`http://localhost:4001/api/goals/${id}`, { method: "DELETE" })
+    .then(() => {
+      setGoals(goals.filter(g => g.id !== id));
+      showNotification("Goal deleted.", "info");
+    });
 };
 
   return (
@@ -298,6 +354,54 @@ const handleClearFilter = () => {
               ))}
             </tbody>
           </table>
+          <div className="goals-section">
+            <h2>Goals</h2>
+            <div className="goals-form">
+              <label>Goal
+                <input
+                  placeholder="e.g. Deadlift 200 lbs"
+                  value={goalForm.title}
+                  onChange={e => setGoalForm({ ...goalForm, title: e.target.value })}
+                />
+              </label>
+              <label>Target Date
+                <input
+                  type="date"
+                  value={goalForm.endDate}
+                  onChange={e => setGoalForm({ ...goalForm, endDate: e.target.value })}
+                />
+              </label>
+              <button className="filter-button" onClick={handleAddGoal}>Add Goal</button>
+            </div>
+
+            {goals.length === 0 ? (
+              <p style={{ textAlign: "center", color: "#555" }}>No goals set yet.</p>
+            ) : (
+              <table className="goals-table">
+                <thead>
+                  <tr>
+                    <th>Goal</th>
+                    <th>Target Date</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {goals.map(g => (
+                    <tr key={g.id}>
+                      <td>{g.title}</td>
+                      <td>{g.endDate}</td>
+                      <td>{g.status}</td>
+                      <td>
+                        <button className="delete-goal-button" onClick={() => handleDeleteGoal(g.id)}>Delete</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+
         </div>
       )}
       {showTooltip && (
